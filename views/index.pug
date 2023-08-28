@@ -1,11 +1,15 @@
 extends layout
 
 block content
-  h1.font-bold.text-3xl.mt-4 List your #{title}
-  p Welcome to #{title}
+  h1.font-bold.text-4xl.mt-4 List your #{title}
+  p(class="text-gray-600") Welcome to #{title}
 
-  div(class="flex flex-col space-y-2 mt-4")
-    p(for="todo") Add Todo
-    input(class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50", placeholder="Add Todo", type="text", name="todo", id="todo")
+  form(class="flex items-start flex-col space-y-2 mt-4")
+    label(for="todo" class="text-2xl font-semibold") Add Todo
+    input(placeholder="Add Todo", type="text", name="title", id="todo", class="flex rounded-md w-full border border-gray-700 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50")
+    button(type="submit" hx-post="/todos" hx-ext="json-enc" hx-swap='innerHTML' hx-target='#todo-list' class="flex items-center justify-center px-4 py-2 text-sm font-medium ml-auto text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50") Add Todo
   
-  div() List of todos
+  div(class="mt-4 text-2xl") List of todos
+  div(id="todo-list") 
+    div(hx-get='/todos' hx-trigger="load" hx-swap='innerHTML' hx-target='#todo-list')
+      | Loading users...

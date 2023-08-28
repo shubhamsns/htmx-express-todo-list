@@ -1,0 +1,6 @@
+ul(class="mt-2")
+    each todo, index in todos
+        li(class="flex items-center space-x-2 w-full")
+            input(hx-put='/todos/'+todo.id hx-ext="json-enc" hx-trigger="change" type="checkbox" name="checked" class="rounded-md border border-gray-700 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50")&attributes(todo.checked ? {checked: true} : {})
+            div(class="text-gray-600")= todo.title
+            button(hx-delete="/todos/"+todo.id hx-trigger="click" hx-swap='innerHTML' hx-target='#todo-list' class="border border-gray-700 bg-gray-300 rounded ml-auto") delete

@@ -1,55 +1,52 @@
-const express = require('express');
-const { PrismaClient } = require('@prisma/client')
+const express = require("express");
+const {
+  getTodosList,
+  createTodo,
+  updateTodo,
+  deleteTodo,
+} = require("../services/todos.service");
 
 const router = express.Router();
-const prisma = new PrismaClient()
-
 
 /* GET todos listing. */
-router.get('/', async function(req, res, next) {
-  const todoList = await prisma.todo.findMany()
-
-  res.json(todoList)
+router.get("/", async function (req, res, next) {
+  try {
+    const todoList = await getTodosList();
+    res.render("todo-list", { todos: todoList });
+  } catch (err) {
+    res.render("error", { error: err });
+  }
 });
 
-router.post('/', async function(req, res, next) {
-  const { title, content } = req.body
+// todo: handle errors/failures
+router.post("/", async function (req, res, next) {
+  const { title } = req.body;
+  await createTodo({ title });
 
-  const todo = await prisma.todo.create({
-    data: {
-      title,
-      content,
-    }
-  })
+  const todoList = await getTodosList();
+  res.render("todo-list", { todos: todoList });
+});
 
-  res.json(todo)
-})
+router.put("/:id", async function (req, res, next) {
+  const { title, checked } = req.body;
+  const id = Number(req.params.id);
 
-router.put('/:id', async function(req, res, next) {
-  const { title, content } = req.body
+  const todo = await updateTodo({
+    title,
+    checked: checked === "on" ? true : false,
+    id,
+  });
 
-  const todo = await prisma.todo.update({
-    where: {
-      id: Number(req.params.id)
-    },
-    data: {
-      title,
-      content,
-    }
-  })
+  const todoList = await getTodosList();
+  res.render("todo-list", { todos: todoList });
+});
 
-  res.json(todo)
-})
+router.delete("/:id", async function (req, res, next) {
+  const id = Number(req.params.id);
+  const deletedTodo = await deleteTodo({ id });
 
-
-router.delete('/:id', async function(req, res, next) {
-  const deletedTodo = await prisma.todo.delete({
-    where: {
-      id: Number(req.params.id)
-    }
-  })
-
-  res.json(deletedTodo)
-})
+  const todoList = await getTodosList();
+  res.render("todo-list", { todos: todoList });
+});
 
 module.exports = router;
